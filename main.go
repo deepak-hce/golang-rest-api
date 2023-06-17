@@ -1,8 +1,8 @@
 package main
 
 import (
-	controller "rest-api/controllers"
 	"rest-api/initializers"
+	route "rest-api/routes"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,6 +14,6 @@ func init() {
 
 func main() {
 	r := gin.Default()
-	r.POST("/user", controller.CreateUser)
+	route.UserRoute(r)
 	r.Run()
 }

@@ -48,3 +48,20 @@ func CreateUser(c *gin.Context) {
 		"result":  user,
 	})
 }
+
+func FetchUsers(c *gin.Context) {
+
+	var users []models.User
+
+	result := initializers.DB.Limit(100).Find(&users)
+
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "User fetched successfully",
+		"result":  users,
+	})
+}
