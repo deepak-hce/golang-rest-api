@@ -1,8 +1,10 @@
 package controller
 
 import (
+	"encoding/json"
 	"fmt"
 	"rest-api/initializers"
+	"rest-api/interfaces"
 	"rest-api/models"
 	"time"
 
@@ -60,8 +62,22 @@ func FetchUsers(c *gin.Context) {
 		return
 	}
 
+	encodedUsers, err := json.Marshal(&users)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var marshalUsers []interfaces.User
+	err = json.Unmarshal(encodedUsers, &marshalUsers)
+
+	if err != nil {
+		fmt.Println(err)
+
+	}
+
 	c.JSON(200, gin.H{
 		"message": "User fetched successfully",
-		"result":  users,
+		"result":  marshalUsers,
 	})
 }
