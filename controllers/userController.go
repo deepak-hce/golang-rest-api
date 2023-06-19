@@ -6,6 +6,7 @@ import (
 	"rest-api/initializers"
 	"rest-api/interfaces"
 	"rest-api/models"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -53,9 +54,45 @@ func CreateUser(c *gin.Context) {
 
 func FetchUsers(c *gin.Context) {
 
+	var itemsPerPage int
+	var pageNumber int
+
+	itemsPerPageQuery := c.Query("itemsPerPage")
+	pageNumberQuery := c.Query("pageNumber")
+
+	if itemsPerPageQuery == "" {
+		itemsPerPage = 10
+	} else {
+		s, err := strconv.Atoi(itemsPerPageQuery)
+		if err != nil {
+			c.JSON(400, gin.H{
+				"error": err,
+			})
+			fmt.Println(err)
+			return
+		}
+		itemsPerPage = s
+	}
+
+	if pageNumberQuery == "" {
+		pageNumber = 1
+	} else {
+		s, err := strconv.Atoi(pageNumberQuery)
+		if err != nil {
+			c.JSON(400, gin.H{
+				"error": err,
+			})
+			fmt.Println(err)
+
+			return
+		}
+
+		pageNumber = s
+	}
+
 	var users []models.User
 
-	result := initializers.DB.Limit(100).Find(&users)
+	result := initializers.DB.Order("created_at DESC").Limit(itemsPerPage).Offset((pageNumber - 1) * itemsPerPage).Find(&users)
 
 	if result.Error != nil {
 		c.Status(400)
@@ -73,7 +110,6 @@ func FetchUsers(c *gin.Context) {
 
 	if err != nil {
 		fmt.Println(err)
-
 	}
 
 	c.JSON(200, gin.H{
