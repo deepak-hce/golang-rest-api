@@ -66,7 +66,7 @@ func FetchUsers(c *gin.Context) {
 		s, err := strconv.Atoi(itemsPerPageQuery)
 		if err != nil {
 			c.JSON(400, gin.H{
-				"error": err,
+				"error": err.Error(),
 			})
 			fmt.Println(err)
 			return
@@ -80,7 +80,7 @@ func FetchUsers(c *gin.Context) {
 		s, err := strconv.Atoi(pageNumberQuery)
 		if err != nil {
 			c.JSON(400, gin.H{
-				"error": err,
+				"error": err.Error(),
 			})
 			fmt.Println(err)
 
