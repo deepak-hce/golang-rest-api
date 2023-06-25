@@ -14,7 +14,7 @@ type Model struct {
 }
 
 type User struct {
-	gorm.Model
+	ID          uint `gorm:"primaryKey"`
 	FirstName   string
 	LastName    string
 	Photo       string

@@ -116,4 +116,56 @@ func FetchUsers(c *gin.Context) {
 		"message": "User fetched successfully",
 		"result":  marshalUsers,
 	})
+
+}
+
+func UpdateUser(c *gin.Context) {
+
+	userId := c.Param("id")
+
+	var body struct {
+		FirstName   string
+		LastName    string
+		DateOfBirth string
+		Photo       string
+	}
+
+	c.Bind(&body)
+
+	var date time.Time
+	var error error
+	dateString := body.DateOfBirth
+	date, error = time.Parse("2006-01-02", dateString)
+	if error != nil {
+		c.JSON(400, gin.H{
+			"message": "Error while creating user",
+			"result":  error,
+		})
+		return
+	}
+
+	fmt.Println(body)
+
+	uintUserId, err := strconv.Atoi(userId)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	user := models.User{ID: uint(uintUserId), FirstName: body.FirstName, LastName: body.LastName, Photo: body.Photo, DateOfBirth: date}
+
+	result := initializers.DB.Save(&user)
+	if result.Error != nil {
+		c.JSON(200, gin.H{
+			"message": "Error while updating the user",
+			"result":  "",
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "User updated successfully",
+		"result":  user,
+	})
+
 }
